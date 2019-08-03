@@ -3,9 +3,9 @@ import tensorflow as tf
 
 class Model(object):
     def __init__(self, steps=None):
-        self.estimator = tf.estimator.Estimator(self.build_model())
-        self.steps = steps
-        self.optimizer = self.model_optimizer()
+        self._estimator = tf.estimator.Estimator(self.build_model())
+        self._steps = steps
+        self._optimizer = self.model_optimizer()
 
     def build_model(self):
         def model_fn(features, labels, mode, params):
@@ -26,14 +26,13 @@ class Model(object):
         raise NotImplementedError
 
     def fit(self, data_set):
-        self.estimator.train(data_set.parsed_data, steps=self.steps)
+        self._estimator.train(data_set.parsed_data, steps=self._steps)
 
     def predict(self, data_set):
-        for i in self.estimator.predict(data_set.parsed_data):
-            print(i)
+        return self._estimator.predict(data_set.parsed_data)
 
     def eval(self, data_set):
-        return self.estimator.evaluate(data_set.parsed_data)
+        return self._estimator.evaluate(data_set.parsed_data)
 
     @staticmethod
     def feature_engineer(self, features):
@@ -52,5 +51,5 @@ class Model(object):
         raise NotImplementedError
 
     def model_train_op(self, loss):
-        train_op = self.optimizer.minimize(loss, global_step=tf.train.get_global_step())
+        train_op = self._optimizer.minimize(loss, global_step=tf.train.get_global_step())
         return train_op
