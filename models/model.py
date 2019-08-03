@@ -3,7 +3,7 @@ import tensorflow as tf
 
 class Model(object):
     def __init__(self, steps=None):
-        self._estimator = tf.estimator.Estimator(self.build_model())
+        self.estimator = tf.estimator.Estimator(self.build_model())
         self._steps = steps
         self._optimizer = self.model_optimizer()
 
@@ -25,14 +25,22 @@ class Model(object):
     def network(self, x):
         raise NotImplementedError
 
-    def fit(self, data_set):
-        self._estimator.train(data_set.parsed_data, steps=self._steps)
+    def fit(self, train_set, eval_set=None,patient=None,metric=None):
+        if eval_set:
+            hook = tf.contrib.estimator.stop_if_no_increase_hook(self.estimator, metric,
+                                                                 max_steps_without_increase=patient)
+            train_spec = tf.estimator.TrainSpec(input_fn=train_set.parsed_data, hooks=[hook])
+            eval_spec = tf.estimator.EvalSpec(input_fn=eval_set.parsed_data)
+            return tf.estimator.train_and_evaluate(self.estimator, train_spec, eval_spec)
+        else:
+            self.estimator.train(train_set.parsed_data, steps=self._steps)
 
     def predict(self, data_set):
-        return self._estimator.predict(data_set.parsed_data)
+        return self.estimator.predict(data_set.parsed_data)
 
     def eval(self, data_set):
-        return self._estimator.evaluate(data_set.parsed_data)
+        return self.estimator.evaluate(data_set.parsed_data)
+
 
     @staticmethod
     def feature_engineer(self, features):
