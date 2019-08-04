@@ -10,9 +10,8 @@ class LR(Model):
 
     def network(self, input):
         embedding_out, numerical = self.feature_engineer(input)
-        x = tf.concat(embedding_out + numerical, -1)
-        logits = tf.layers.dense(x, 1, activation='sigmoid')
-        return logits
+        network_out = tf.concat(embedding_out + numerical, -1)
+        return network_out
 
     def feature_engineer(self, features):
         embedding_layers = {k: tf.keras.layers.Embedding(v,self.get_embedding_size(v)) for k,v in self._scheme_dict['sparse_feature'].items()}
@@ -34,3 +33,7 @@ class LR(Model):
     @staticmethod
     def model_optimizer():
         return tf.train.AdamOptimizer()
+
+    @staticmethod
+    def model_predictions(network_out):
+        return tf.layers.dense(network_out, 1, activation='sigmoid')

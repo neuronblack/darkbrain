@@ -8,7 +8,7 @@ from sklearn.preprocessing import MinMaxScaler
 
 
 def main(_):
-    data = pd.read_csv('/Users/edz/Documents/bank/train_set.csv')
+    data = pd.read_csv('train_set.csv')
     feature = data.columns.tolist()
     feature.remove('ID')
     feature.remove('y')

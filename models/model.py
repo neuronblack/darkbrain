@@ -9,7 +9,8 @@ class Model(object):
 
     def build_model(self):
         def model_fn(features, labels, mode, params):
-            predictions = self.network(features)
+            network_out = self.network(features)
+            predictions = self.model_predictions(network_out)
             if mode == tf.estimator.ModeKeys.PREDICT:
                 return tf.estimator.EstimatorSpec(mode, predictions=predictions)
             loss = self.model_loss(labels, predictions)
@@ -56,6 +57,10 @@ class Model(object):
 
     @staticmethod
     def model_optimizer():
+        raise NotImplementedError
+
+    @staticmethod
+    def model_predictions(network_out):
         raise NotImplementedError
 
     def model_train_op(self, loss):
