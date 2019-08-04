@@ -7,7 +7,7 @@ class FM(LR):
     def network(self, input):
         embedding, numerical = self.feature_engineer(input)
         bi_interaction_pooling = BiInteractionPooling()
-        embedding = tf.stack(embedding, axis=1)
-        bi_out = bi_interaction_pooling(embedding)
-        network_out = tf.concat([bi_out] + numerical, -1)
+        embedding_bi = tf.stack(embedding, axis=1)
+        bi_out = bi_interaction_pooling(embedding_bi)
+        network_out = tf.concat([bi_out] + numerical + embedding, -1)
         return network_out
