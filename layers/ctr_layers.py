@@ -3,6 +3,7 @@ from tensorflow.python.keras.layers import Layer
 
 
 class BiInteractionPooling(Layer):
+
     def __init__(self, **kwargs):
         super(BiInteractionPooling, self).__init__(**kwargs)
 

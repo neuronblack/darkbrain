@@ -2,6 +2,7 @@ import tensorflow as tf
 
 
 class Model(object):
+
     def __init__(self, steps=None):
         self.estimator = tf.estimator.Estimator(self.build_model())
         self._steps = steps

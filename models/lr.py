@@ -3,6 +3,7 @@ from .model import Model
 
 
 class LR(Model):
+
     def __init__(self, scheme_dict, embedding_size=None, steps=None):
         super(LR, self).__init__(steps)
         self._scheme_dict = scheme_dict

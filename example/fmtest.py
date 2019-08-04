@@ -14,7 +14,7 @@ def main(_):
     feature.remove('like')
     sparse_feature = ['uid', 'user_city', 'item_id', 'author_id', 'item_city', 'channel', 'music_id', 'did']
     dense_feature = ['video_duration']
-    label = 'finish'
+    label = 'like'
     lbl = LabelEncoder()
     mms = MinMaxScaler()
     for s in sparse_feature:
@@ -27,9 +27,9 @@ def main(_):
     scheme_dict = build_scheme_dict(data, dense_feature, sparse_feature, label, 'sc.json')
     TfrecordBuilder(train_data, scheme_dict, 'train.tfrecord')
     TfrecordBuilder(vaild_data, scheme_dict, 'vaild.tfrecord')
-    train_dataset = TabularDataSet(scheme_dict, 'train.tfrecord', is_train=True, epochs=1, batch_size=1000)
+    train_dataset = TabularDataSet(scheme_dict, 'train.tfrecord', is_train=True, epochs=5, batch_size=1000)
     vaild_dataset = TabularDataSet(scheme_dict, 'vaild.tfrecord', is_train=True, epochs=1, batch_size=1000)
-    model = FM(scheme_dict, 5)
+    model = FM(scheme_dict, 10)
     model.fit(train_dataset)
     result = model.eval(vaild_dataset)
     print(result)

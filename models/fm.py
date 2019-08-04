@@ -4,6 +4,7 @@ from layers.ctr_layers import BiInteractionPooling
 
 
 class FM(LR):
+
     def network(self, input):
         embedding, numerical = self.feature_engineer(input)
         bi_interaction_pooling = BiInteractionPooling()
