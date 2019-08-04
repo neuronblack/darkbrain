@@ -1,7 +1,7 @@
 import tensorflow as tf
 from datasets.tabular_dataset import TfrecordBuilder, TabularDataSet
 import pandas as pd
-from models.lr import LR
+from models.fm import FM
 from sklearn.preprocessing import LabelEncoder
 from utils.toolbox import build_scheme_dict
 from sklearn.preprocessing import MinMaxScaler
@@ -28,12 +28,11 @@ def main(_):
     TfrecordBuilder(train_data, scheme_dict, 'train.tfrecord')
     TfrecordBuilder(vaild_data, scheme_dict, 'vaild.tfrecord')
     train_dataset = TabularDataSet(scheme_dict, 'train.tfrecord', is_train=True, epochs=100, batch_size=1000)
-    vaild_dataset = TabularDataSet(scheme_dict, 'vaild.tfrecord', is_train=True, epochs=1, batch_size=100)
-    model = LR(scheme_dict, 5)
+    vaild_dataset = TabularDataSet(scheme_dict, 'vaild.tfrecord', is_train=True, epochs=1, batch_size=1000)
+    model = FM(scheme_dict, 5)
     model.fit(train_dataset)
-    result = model.predict(vaild_dataset)
-    for r in result:
-        print(r)
+    result = model.eval(vaild_dataset)
+    print(result)
 
 
 tf.logging.set_verbosity(tf.logging.INFO)

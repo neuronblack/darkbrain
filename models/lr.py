@@ -9,16 +9,16 @@ class LR(Model):
         self._embedding_size = embedding_size
 
     def network(self, input):
-        embedding_out, numerical = self.feature_engineer(input)
-        network_out = tf.concat(embedding_out + numerical, -1)
+        embedding, numerical = self.feature_engineer(input)
+        network_out = tf.concat(embedding + numerical, -1)
         return network_out
 
     def feature_engineer(self, features):
         embedding_layers = {k: tf.keras.layers.Embedding(v,self.get_embedding_size(v)) for k,v in self._scheme_dict['sparse_feature'].items()}
-        embedding_out = [tf.squeeze(v(features[k]), 1) for k,v in embedding_layers.items()]
+        embedding = [tf.squeeze(v(features[k]), 1) for k,v in embedding_layers.items()]
         numerical = [features[d] for d in self._scheme_dict['dense_feature']]
         numerical = tf.keras.layers.concatenate(numerical)
-        return embedding_out, [tf.keras.layers.BatchNormalization()(numerical)]
+        return embedding, [tf.keras.layers.BatchNormalization()(numerical)]
 
     def get_embedding_size(self,vocab_size):
         return self._embedding_size if self._embedding_size else int(vocab_size ** 0.25 * 6)
