@@ -22,6 +22,7 @@ class LR(Model):
 
     def get_embedding_size(self,vocab_size):
         return self._embedding_size if self._embedding_size else int(vocab_size ** 0.25 * 6)
+    
     @staticmethod
     def model_metric(labels, predictions):
         return {'auc': tf.metrics.auc(labels, predictions)}
