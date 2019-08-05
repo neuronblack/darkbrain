@@ -18,11 +18,7 @@ class LR(Model):
         embedding_layers = {k: tf.keras.layers.Embedding(v,self.get_embedding_size(v)) for k, v in self._scheme_dict['sparse_feature'].items()}
         embedding = [tf.squeeze(v(features[k]), 1) for k,v in embedding_layers.items()]
         numerical = [features[d] for d in self._scheme_dict['dense_feature']]
-        if len(numerical) > 1:
-            numerical = tf.keras.layers.concatenate(numerical)
-        else:
-            numerical = numerical[0]
-        return embedding, [tf.keras.layers.BatchNormalization()(numerical)]
+        return embedding, numerical
 
     def get_embedding_size(self,vocab_size):
         return self._embedding_size if self._embedding_size else int(vocab_size ** 0.25 * 6)
