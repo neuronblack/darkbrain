@@ -1,5 +1,5 @@
 import tensorflow as tf
-from datasets.tabular_dataset import TfrecordBuilder, TabularDataSet
+from ..datasets.tabular_dataset import TfrecordBuilder, TabularDataSet
 import pandas as pd
 from models.dcn import DCN
 from sklearn.preprocessing import LabelEncoder
