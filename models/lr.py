@@ -15,14 +15,14 @@ class LR(Model):
         return network_out
 
     def feature_engineer(self, features):
-        embedding_layers = {k: tf.keras.layers.Embedding(v,self.get_embedding_size(v)) for k, v in self._scheme_dict['sparse_feature'].items()}
-        embedding = [tf.squeeze(v(features[k]), 1) for k,v in embedding_layers.items()]
+        embedding_layers = {k: tf.keras.layers.Embedding(v, self.get_embedding_size(v), mask_zero=True, name='embedding_'+k) for k, v in self._scheme_dict['sparse_feature'].items()}
+        embedding = [tf.squeeze(v(features[k]), 1) for k, v in embedding_layers.items()]
         numerical = [features[d] for d in self._scheme_dict['dense_feature']]
         return embedding, numerical
 
-    def get_embedding_size(self,vocab_size):
+    def get_embedding_size(self, vocab_size):
         return self._embedding_size if self._embedding_size else int(vocab_size ** 0.25 * 6)
-    
+
     @staticmethod
     def model_metric(labels, predictions):
         return {'auc': tf.metrics.auc(labels, predictions)}

@@ -1,7 +1,7 @@
 import tensorflow as tf
 from datasets.tabular_dataset import TfrecordBuilder, TabularDataSet
 import pandas as pd
-from models.fm import FM
+from models.dcn import DCN
 from sklearn.preprocessing import LabelEncoder
 from utils.toolbox import build_scheme_dict
 from sklearn.preprocessing import MinMaxScaler
@@ -29,7 +29,7 @@ def main(_):
     TfrecordBuilder(vaild_data, scheme_dict, 'vaild.tfrecord')
     train_dataset = TabularDataSet(scheme_dict, 'train.tfrecord', is_train=True, epochs=5, batch_size=1000)
     vaild_dataset = TabularDataSet(scheme_dict, 'vaild.tfrecord', is_train=True, epochs=1, batch_size=1000)
-    model = FM(scheme_dict, 10)
+    model = DCN(scheme_dict, 2)
     model.fit(train_dataset)
     result = model.eval(vaild_dataset)
     print(result)
