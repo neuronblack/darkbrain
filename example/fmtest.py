@@ -1,5 +1,5 @@
 import tensorflow as tf
-from ..datasets.tabular_dataset import TfrecordBuilder, TabularDataSet
+from datasets.tabular_dataset import TfrecordBuilder, TabularDataSet
 import pandas as pd
 from models.dcn import DCN
 from sklearn.preprocessing import LabelEncoder
@@ -21,17 +21,12 @@ def main(_):
         data[s] = lbl.fit_transform(data[s])
     for d in dense_feature:
         data[d] = mms.fit_transform(data[d].values.reshape(-1, 1))
-    vaild_split = int(data.shape[0]*0.7)
-    train_data = data[:vaild_split]
-    vaild_data = data[vaild_split:]
     scheme_dict = build_scheme_dict(data, dense_feature, sparse_feature, label, 'sc.json')
-    TfrecordBuilder(train_data, scheme_dict, 'train.tfrecord')
-    TfrecordBuilder(vaild_data, scheme_dict, 'vaild.tfrecord')
-    train_dataset = TabularDataSet(scheme_dict, 'train.tfrecord', is_train=True, epochs=5, batch_size=1000)
-    vaild_dataset = TabularDataSet(scheme_dict, 'vaild.tfrecord', is_train=True, epochs=1, batch_size=1000)
+    TfrecordBuilder(data, scheme_dict, 'data.tfrecord')
+    train_dataset = TabularDataSet(scheme_dict, 'data.tfrecord', is_train=True, epochs=5, batch_size=1000)
     model = DCN(scheme_dict, 2)
     model.fit(train_dataset)
-    result = model.eval(vaild_dataset)
+    result = model.predict(train_dataset)
     print(result)
 
 

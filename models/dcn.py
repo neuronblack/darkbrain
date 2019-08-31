@@ -1,6 +1,6 @@
 import tensorflow as tf
 from .lr import LR
-from ..layers.ctr_layers import Cross
+from layers.ctr_layers import Cross
 
 
 class DCN(LR):

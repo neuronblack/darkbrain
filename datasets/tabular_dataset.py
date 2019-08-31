@@ -42,7 +42,7 @@ class TabularDataSet(object):
         parsed_dataset = tf.data.TFRecordDataset(filenames)
         if self._is_train:
             parsed_dataset = parsed_dataset.shuffle(buffer_size=self._buffer_size)
-        parsed_dataset = parsed_dataset.repeat(self._epochs)
+            parsed_dataset = parsed_dataset.repeat(self._epochs)
         parsed_dataset = parsed_dataset.map(self._parse_function)
         parsed_dataset = parsed_dataset.prefetch(buffer_size=self._buffer_size)
         return parsed_dataset.batch(self._batch_size)
