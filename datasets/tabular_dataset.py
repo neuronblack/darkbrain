@@ -3,7 +3,7 @@ import json
 
 
 class TabularDataSet(object):
-    def __init__(self, scheme_dict, tfrecord_path, is_train=False, epochs=5,batch_size=32, buffer_size=50):
+    def __init__(self, scheme_dict, tfrecord_path, is_train=False, epochs=5, batch_size=32, buffer_size=50):
         self._epochs = epochs
         self._batch_size = batch_size
         self._buffer_size = buffer_size
@@ -39,13 +39,18 @@ class TabularDataSet(object):
 
     def parsed_data(self):
         filenames = self._tfrecord_path
-        parsed_dataset = tf.data.TFRecordDataset(filenames)
+        if isinstance(filenames, list):
+            filenames = tf.data.Dataset.from_tensor_slices(filenames)
+            parsed_dataset = filenames.interleave(tf.data.TFRecordDataset, cycle_length=20, block_length=32)
+        else:
+            parsed_dataset = tf.data.TFRecordDataset(filenames)
         if self._is_train:
             parsed_dataset = parsed_dataset.shuffle(buffer_size=self._buffer_size)
-        parsed_dataset = parsed_dataset.repeat(self._epochs)
+            parsed_dataset = parsed_dataset.repeat(self._epochs)
         parsed_dataset = parsed_dataset.map(self._parse_function)
+        parsed_dataset = parsed_dataset.batch(self._batch_size)
         parsed_dataset = parsed_dataset.prefetch(buffer_size=self._buffer_size)
-        return parsed_dataset.batch(self._batch_size)
+        return parsed_dataset
 
 
 class TfrecordBuilder(object):

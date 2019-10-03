@@ -1,20 +1,23 @@
 import tensorflow as tf
+import sys
+sys.path.append('../')
 from datasets.tabular_dataset import TfrecordBuilder, TabularDataSet
 import pandas as pd
 from models.fm import FM
 from sklearn.preprocessing import LabelEncoder
 from utils.toolbox import build_scheme_dict
 from sklearn.preprocessing import MinMaxScaler
-
+from time import time
 
 def main(_):
+    now = time()
     data = pd.read_csv('train10w.csv')
     feature = data.columns.tolist()
     feature.remove('finish')
     feature.remove('like')
     sparse_feature = ['uid', 'user_city', 'item_id', 'author_id', 'item_city', 'channel', 'music_id', 'did']
     dense_feature = ['video_duration']
-    label = 'like'
+    label = 'finish'
     lbl = LabelEncoder()
     mms = MinMaxScaler()
     for s in sparse_feature:
@@ -31,9 +34,8 @@ def main(_):
     vaild_dataset = TabularDataSet(scheme_dict, 'vaild.tfrecord', is_train=True, epochs=1, batch_size=1000)
     model = FM(scheme_dict, 10)
     model.fit(train_dataset)
-    result = model.eval(vaild_dataset)
-    print(result)
-
+    print(model.eval(vaild_dataset))
+    print('time:', time()-now)
 
 tf.logging.set_verbosity(tf.logging.INFO)
 tf.app.run(main)

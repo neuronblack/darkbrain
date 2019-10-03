@@ -4,9 +4,13 @@ import tensorflow as tf
 class Model(object):
 
     def __init__(self, steps=None):
-        self.estimator = tf.estimator.Estimator(self.build_model())
         self._steps = steps
-        self._optimizer = self.model_optimizer()
+        self.estimator = self._build_estimator()
+
+    def _build_estimator(self):
+        sess_config = tf.ConfigProto(allow_soft_placement=True)
+        sess_config.gpu_options.allow_growth = True
+        return tf.estimator.Estimator(self.build_model())
 
     def build_model(self):
         def model_fn(features, labels, mode, params):
@@ -27,7 +31,7 @@ class Model(object):
     def network(self, x):
         raise NotImplementedError
 
-    def fit(self, train_set, eval_set=None,patient=None,metric=None):
+    def fit(self, train_set, eval_set=None, patient=None, metric=None):
         if eval_set:
             hook = tf.contrib.estimator.stop_if_no_increase_hook(self.estimator, metric,
                                                                  max_steps_without_increase=patient)
@@ -65,5 +69,6 @@ class Model(object):
         raise NotImplementedError
 
     def model_train_op(self, loss):
-        train_op = self._optimizer.minimize(loss, global_step=tf.train.get_global_step())
+        optimizer = self.model_optimizer()
+        train_op = optimizer.minimize(loss, global_step=tf.train.get_global_step())
         return train_op
