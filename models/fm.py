@@ -1,6 +1,6 @@
 import tensorflow as tf
-from .lr import LR
-from ..layers.ctr_layers import BiInteractionPooling
+from models.lr import LR
+from layers.ctr_layers import BiInteractionPooling
 
 
 class FM(LR):

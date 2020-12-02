@@ -31,8 +31,12 @@ def main(_):
     vaild_dataset = TabularDataSet(scheme_dict, 'vaild.tfrecord', is_train=True, epochs=1, batch_size=1000)
     model = FM(scheme_dict, 10)
     model.fit(train_dataset)
-    result = model.eval(vaild_dataset)
+    model.eval(vaild_dataset)
+
+    test_dataset = TabularDataSet(scheme_dict, 'vaild.tfrecord', is_train=False, epochs=1, batch_size=1000)
+    result = [m for m in model.predict(test_dataset)]
     print(result)
+
 
 
 tf.logging.set_verbosity(tf.logging.INFO)
